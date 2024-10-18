@@ -4,26 +4,27 @@ import 'package:flox/Login/Button_Reuseable.dart';
 import 'package:flox/Login/OTP_Screen.dart';
 import 'package:flox/Text_Button.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart'as http;
 
 class SignUpScreen extends StatefulWidget {
-  SignUpScreen({super.key});
+  const SignUpScreen({super.key});
 
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  TextEditingController userregcontroller = TextEditingController();
+  TextEditingController regmobilecontroller = TextEditingController();
+  TextEditingController regnamecontroller = TextEditingController();
+  TextEditingController regemailcontroller = TextEditingController();
 
   bool value = false;
   final _formKey = GlobalKey<FormState>();
 
-  // Regular expression for email validation
   final RegExp _emailRegExp = RegExp(
     r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
   );
 
-  // Regular expression for phone number validation (10 digits, starting with [6-9])
   final RegExp _phoneRegExp = RegExp(
     r'^[0-9]\d{9}$',
   );
@@ -31,34 +32,41 @@ class _SignUpScreenState extends State<SignUpScreen> {
   // Validation function
   String? _validateReg(String value) {
     if (value.isEmpty) {
-      return 'Please enter an email or phone number';
-    } else if (_phoneRegExp.hasMatch(value)) {
-      if (value.length != 10) {
-        return 'Phone number must be exactly 10 digits';
-      }
+      return 'Please enter an E-mail';
+      // } else if (_phoneRegExp.hasMatch(value)) {
+      //   if (value.length != 10) {
+      //     return 'Phone number must be exactly 10 digits';
+      //   }
     } else if (!_emailRegExp.hasMatch(value)) {
-      return 'Please enter a valid email or phone number';
+      return 'Please enter a valid Email';
     }
     return null;
   }
 
-  void _Rsubmit() {
-    if (_formKey.currentState?.validate() == true) {
-      userregcontroller.text = '';
+  Future<void> _Rsubmit() async {
+    const String url = 'https://chitsoft.in/wapp/api/mobile2/verify_user.php';
+    try {
+      if (_formKey.currentState?.validate() == true) {
+        regemailcontroller.text = '';
+        regmobilecontroller.text = '';
+        regnamecontroller.text = '';
+        final response = await http
+            .post(Uri.parse(url), body: {'type': '2', 'cid': '21472147'});
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => OTPScreen()),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Please enter a valid user ID and password',
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => OTPScreen()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              ' Enter a valid user ID and password',
+            ),
           ),
-        ),
-      );
-    }
+        );
+      }
+    } catch (error) {}
   }
 
   @override
@@ -96,7 +104,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
           ),
           Positioned(
-            top: screenHeight * 0.20,
+            top: screenHeight * 0.2,
             right: -screenWidth * 0.04,
             child: Form(
               key: _formKey,
@@ -112,37 +120,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       height: 40.35 / 26,
                       fontWeight: FontWeight.w700,
                     ),
-                    // Aligns text to the left
                   ),
-                  const SizedBox(
-                    height: 40,
-                  ),
-                  const Text(
-                    'Please Enter Your Email or Mobile Number',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'OpenSans',
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  const Text(
-                    'To Receive a Verification Code',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'OpenSans',
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 40),
+                  SizedBox(height: screenHeight * 0.03),
                   SizedBox(
                     width: screenWidth * 0.9,
                     child: const Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        'Email/Mobile number',
+                        'Name',
                         style: TextStyle(
                           color: Colors.white,
                           fontFamily: 'OpenSans',
@@ -152,26 +137,83 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  SizedBox(height: screenHeight * 0.02),
+                  SizedBox(height: screenHeight * 0.01),
                   SizedBox(
                     width: screenWidth * 0.9,
                     child: InputTextField(
-                      hint: 'autochit@gmail.com',
-                      controller: userregcontroller,
+                      hint: 'Name',
+                      controller: regnamecontroller,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your User id';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  SizedBox(height: screenHeight * 0.01),
+                  SizedBox(
+                    width: screenWidth * 0.9,
+                    child: const Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'E-Mail',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'OpenSans',
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: screenHeight * 0.01),
+                  SizedBox(
+                    width: screenWidth * 0.9,
+                    child: InputTextField(
+                      hint: 'E-Mail',
+                      controller: regemailcontroller,
                       validator: (value) => _validateReg(value ?? ''),
                     ),
                   ),
-                  const SizedBox(
-                    height: 30,
+                  SizedBox(height: screenHeight * 0.01),
+                  SizedBox(
+                    width: screenWidth * 0.9,
+                    child: const Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Mobile',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'OpenSans',
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
                   ),
+                  SizedBox(height: screenHeight * 0.01),
+                  SizedBox(
+                    width: screenWidth * 0.9,
+                    child: InputTextField(
+                      hint: 'Mobile',
+                      controller: regmobilecontroller,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your Phone number';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  SizedBox(height: screenHeight * 0.02),
                   Mybutton(
-                    buttontext: 'SEND OTP',
+                    buttontext: 'REGISTER',
                     OnTap: () {
                       _Rsubmit();
                     },
                   ),
-                  SizedBox(height: screenHeight * 0.02),
+                  SizedBox(height: screenHeight * 0.01),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -198,13 +240,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(height: screenHeight * 0.05),
+                  SizedBox(height: screenHeight * 0.01),
                   GoogleSigninButton(
                     Googletext: 'Sign in with Google',
                     imagePath: 'assets/GoogleImage.png',
                     GoogleSignin: () {},
                   ),
-                  SizedBox(height: screenHeight * 0.03),
+                  SizedBox(height: screenHeight * 0.01),
                   TextButtonUser(
                     textreg: 'Sign in',
                     newbuttonregister: () {},
@@ -213,49 +255,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
             ),
           ),
-
-          // Positioned(
-          //   top: 530,
-          //   left: -30,
-          //   child: Column(
-          //     crossAxisAlignment: CrossAxisAlignment.center,
-          //     children: [
-          //       Row(
-          //         mainAxisAlignment: MainAxisAlignment.center,
-          //         children: [
-          //           Container(
-          //             width: 200,
-          //             height: 0.5,
-          //             color: const Color(0xff514B6B), // Divider color
-          //           ),
-          //           const SizedBox(
-          //             width: 5,
-          //           ),
-          //           const Text(
-          //             'Or',
-          //             style: TextStyle(
-          //               color: Color(0xff514B6B),
-          //               fontSize: 12,
-          //               fontFamily: 'OpenSans',
-          //               fontWeight: FontWeight.w700,
-          //             ),
-          //           ),
-          //           const SizedBox(
-          //             width: 5,
-          //           ),
-          //           Container(
-          //             width: 200,
-          //             height: 0.5,
-          //             color: const Color(0xff514B6B), // Divider color
-          //           ),
-          //         ],
-          //       ),
-          //       const SizedBox(
-          //         height: 20,
-          //       ),
-          //     ],
-          //   ),
-          // ),
         ],
       ),
     );

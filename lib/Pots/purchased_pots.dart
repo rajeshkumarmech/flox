@@ -1,265 +1,133 @@
 import 'package:flox/Pots/chitpot_name.dart';
-import 'package:flox/Pots/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class PurchasedPotPage extends StatefulWidget {
+class PurchasedPotPage extends StatelessWidget {
   const PurchasedPotPage({super.key});
 
   @override
-  State<PurchasedPotPage> createState() => _PurchasedPotPageState();
-}
-
-class _PurchasedPotPageState extends State<PurchasedPotPage> {
- // Define the target amount
-
-  
-  @override
   Widget build(BuildContext context) {
+    Future<void> getfunction() async {
+      const url =
+          "https://chitsoft.in/wapp/api/mobile3/month_chit_api.php?user=123&password=1234";
+      final uri = Uri.parse(url);
+      try {
+        final response = await http.get(uri);
+        if (response.statusCode == 200) {
+          final responseBody = response.body;
+          final jsonresponse = json.decode(responseBody);
+          List<dynamic> datas = jsonresponse['Datas'];
+          // Navigator.of(context).push(MaterialPageRoute(
+          //     builder: (context) => SelectedChitMonth(
+          //           datas: datas,
+          //         )));
+        }
+      } catch (err) {
+        print("Error: $err");
+      }
+    }
+
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
-      body: Stack(
-        children: [
-          // Background image
-          Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/background.jpg'),
-                fit: BoxFit.cover,
-              ),
-            ),
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        leading: Container(),
+        title: const Text(
+          'Purchased Pots',
+          style: TextStyle(
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w700,
+              fontSize: 27,
+              height: 37 / 27,
+              color: Colors.white),
+        ),
+        centerTitle: true,
+        actions: const [
+          Icon(
+            Icons.notifications_sharp,
+            color: Colors.white,
+            size: 30,
           ),
-
-          // Title centered
-          Positioned(
-            top: 25, // Adjust as needed
-            left: 0,
-            right: 0,
-            child: Align(
-              alignment: Alignment.center,
-              child: Text(
-                "Purchased Pots",
-                style: TextStyle(
-                  fontFamily: 'Poppins', // Ensure correct font family
-                  fontSize: 24,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-
-          // Notification button fixed to the right edge
-          Positioned(
-            top: 20, // Same top position as the title to align vertically
-            right: 0, // Adjust distance from the right edge as needed
-            child: IconButton(
-              icon: Image.asset(
-                  'assets/notification_icon.png'), // Use the custom icon
-              onPressed: () {
-                // Handle notification button press
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Notification button pressed')),
-                );
-              },
-            ),
-          ),
-
-          // White rectangular box with rounded corners
-          Positioned(
-            top: 100, // Adjust as needed for vertical position
-            left: 16, // Gap from the left edge
-            right: 16, // Gap from the right edge
-            child: InkWell(  
-              onTap: () {
-                setState(() {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => ChitpotName_Page()));
-                });
-              }, // Handle the tap event
-              child: Container(
-                width: MediaQuery.of(context).size.width -
-                    32, // 330px with 16px gap on both sides
-                height: 100, // Adjusted height to accommodate both text lines
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(
-                      12), // Set radius for rounded corners
-                ),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Chit Pot Name',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 22,
-                          fontFamily: 'Poppins', // Ensure correct font family
-                          color: Color.fromARGB(240, 13, 1, 64),
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            'Target :',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontFamily:
-                                  'Poppins', // Ensure correct font family
-                              color: Color(0xFF0039DB), // Apply the blue color
-                            ),
-                          ),
-                          SizedBox(
-                              width:
-                                  3), // Space between "Target :" and the amount
-                          Text(
-                            '$target_amount', // Display the target amount
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontFamily:
-                                  'Poppins', // Ensure correct font family
-                              color: Color(
-                                  0xFF0039DB), // Apply the same blue color
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          Positioned(
-            top: 210, // Adjust as needed for vertical position
-            left: 16, // Gap from the left edge
-            right: 16, // Gap from the right edge
-            child: InkWell(
-               // Handle the tap event
-              child: Container(
-                width: MediaQuery.of(context).size.width -
-                    32, // 330px with 16px gap on both sides
-                height: 100, // Adjusted height to accommodate both text lines
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(
-                      12), // Set radius for rounded corners
-                ),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Chit Pot Name',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 22,
-                          fontFamily: 'Poppins', // Ensure correct font family
-                          color: Color.fromARGB(240, 13, 1, 64),
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            'Target :',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontFamily:
-                                  'Poppins', // Ensure correct font family
-                              color: Color(0xFF0039DB), // Apply the blue color
-                            ),
-                          ),
-                          SizedBox(
-                              width:
-                                  3), // Space between "Target :" and the amount
-                          Text(
-                            '$target_amount', // Display the target amount
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontFamily:
-                                  'Poppins', // Ensure correct font family
-                              color: Color(
-                                  0xFF0039DB), // Apply the same blue color
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          Positioned(
-            top: 320, // Adjust as needed for vertical position
-            left: 16, // Gap from the left edge
-            right: 16, // Gap from the right edge
-            child: InkWell(
-              // Handle the tap event
-              child: Container(
-                width: MediaQuery.of(context).size.width -
-                    32, // 330px with 16px gap on both sides
-                height: 100, // Adjusted height to accommodate both text lines
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(
-                      12), // Set radius for rounded corners
-                ),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Chit Pot Name',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 22,
-                          fontFamily: 'Poppins', // Ensure correct font family
-                          color: Color.fromARGB(240, 13, 1, 64),
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            'Target :',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontFamily:
-                                  'Poppins', // Ensure correct font family
-                              color: Color(0xFF0039DB), // Apply the blue color
-                            ),
-                          ),
-                          SizedBox(
-                              width:
-                                  3), // Space between "Target :" and the amount
-                          Text(
-                            '$target_amount', // Display the target amount
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontFamily:
-                                  'Poppins', // Ensure correct font family
-                              color: Color(
-                                  0xFF0039DB), // Apply the same blue color
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+          SizedBox(
+            width: 10,
           ),
         ],
+      ),
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/bg.jpeg'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: ListView(children: [
+          colliectionofchit(size, 'Chit Pot Name', '10,000', () {
+            // getfunction();
+                      Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => ChitpotName_Page()));
+          }),
+          colliectionofchit(size, 'Chit Pot Name', '10,000', () {}),
+          colliectionofchit(size, 'Chit Pot Name', '10,000', () {}),
+        ]),
+      ),
+    );
+  }
+
+  GestureDetector colliectionofchit(
+      Size size, String monthname, String investors, Function() function) {
+    return GestureDetector(
+      onTap: function,
+      child: Container(
+        height: size.height / 8,
+        width: size.width,
+        margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10), color: Colors.white),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '$monthname Chit',
+                  style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.bold,
+                      fontSize: size.width * 0.065,
+                      height: 33 / 22,
+                      color: const Color(0Xff0D0140)),
+                ),
+                Row(
+                  children: [
+                    Text(
+                      'Target : ',
+                      style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w600,
+                          fontSize: size.width * 0.045,
+                          height: 22 / 15,
+                          color: const Color(0Xff0039DB)),
+                    ),
+                    Text(
+                      investors,
+                      style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w700,
+                          fontSize: size.width * 0.05,
+                          height: 31 / 21,
+                          color: const Color(0Xff0039DB)),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -44,7 +44,7 @@ class _InputTextFieldState extends State<InputTextField> {
         ),
         hintText: widget.hint,
         hintStyle: const TextStyle(
-            fontSize: 15, color: Color.fromARGB(221, 71, 71, 71)),
+            fontSize: 15, color: Color.fromARGB(221, 138, 136, 136)),
         suffixIcon: widget.isPassword
             ? IconButton(
           icon: Icon(

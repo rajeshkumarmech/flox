@@ -1,18 +1,20 @@
+import 'dart:convert';
 
-import 'package:flox/Bottom_Navigation.dart';
-import 'package:flox/Google_signIn_Button_reuseable.dart';
-import 'package:flox/HomePage.dart';
-import 'package:flox/InputTextField.dart';
-import 'package:flox/Login/Button_Reuseable.dart';
-import 'package:flox/Login/Forgot_password.dart';
-import 'package:flox/Login/Sign_Up_Screen.dart';
-import 'package:flox/Text_Button.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
-
+import '../Bottom_Navigation.dart';
+import '../Chits/chits.dart';
+import '../Google_signIn_Button_reuseable.dart';
+import '../InputTextField.dart';
+import '../Text_Button.dart';
+import 'Button_Reuseable.dart';
+import 'Forgot_password.dart';
+import 'Phone_Number_Login.dart';
+import 'Sign_Up_Screen.dart';
 
 class LoginScreen extends StatefulWidget {
-  LoginScreen({super.key});
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -35,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
   );
 
   // Validation function
-  // Validation function
+
   String? _validateInput(String value) {
     if (value.isEmpty) {
       return 'Please enter an email or phone number';
@@ -49,20 +51,71 @@ class _LoginScreenState extends State<LoginScreen> {
     return null;
   }
 
-  void _submit() {
+  Future<void> _submit() async {
     if (_formKey.currentState?.validate() == true) {
-      useridcontroller.text = '';
-      userpsdcontroller.text = '';
+      try {
+        const String url =
+            'https://chitsoft.in/wapp/api/mobile3/login_user_api.php';
 
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => const TopicButton()),
-      // );
-    } else {
+        final String userId = useridcontroller.text;
+        final String userPassword = userpsdcontroller.text;
+        final response = await http.post(
+          Uri.parse(url),
+          // headers: {
+          //   'Content-Type': 'application/json', // Specify JSON content type
+          // },
+          body: jsonEncode({
+            'user': userId,
+            'password': userPassword,
+          }),
+        );
+        print(response.body);
+        if (response.statusCode == 200) {
+          final Map<String, dynamic> responseData = jsonDecode(response.body);
+          final errorMsg = responseData['error_msg'] ?? 'Unknownerror';
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(errorMsg),
+            ),
+          );
+          useridcontroller..clear();
+          userpsdcontroller.clear();
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Bottomnavbar(),
+            ),
+          );
+        } else if (response.statusCode == 400) {
+          final Map<String, dynamic> responseData = jsonDecode(response.body);
+          final errorMsg = responseData['error_msg'] ?? 'Unknownerror';
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(errorMsg),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error: ${response.statusCode}'),
+            ),
+          );
+        }
+      } catch (e) {
+        print(e);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $e'),
+          ),
+        );
+      }
+    }
+    else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
-            'Please enter a valid user ID and password',
+            "Enter valid Username and Password",
           ),
         ),
       );
@@ -94,7 +147,7 @@ class _LoginScreenState extends State<LoginScreen> {
             child: CircleAvatar(
               radius: screenWidth * 0.24,
               backgroundImage: const AssetImage('assets/Circle.png'),
-              backgroundColor: Color.fromARGB(255, 36, 63, 121),
+              backgroundColor: const Color.fromARGB(255, 36, 63, 121),
             ),
           ),
           Positioned(
@@ -107,7 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
           Positioned(
-            top: screenHeight * 0.20,
+            top: screenHeight * 0.18,
             right: -screenWidth * 0.035,
             child: Form(
               key: _formKey,
@@ -136,7 +189,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: const Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Email/Mobile number',
+                          'User Name :',
                           style: TextStyle(
                             color: Colors.white,
                             fontFamily: 'OpenSans',
@@ -153,9 +206,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: SizedBox(
                       width: screenWidth * 0.9,
                       child: InputTextField(
-                        hint: 'autochit@gmail.com',
+                        hint: 'Enter user name',
                         controller: useridcontroller,
-                        validator: (value) => _validateInput(value ?? ''),
+                        validator: (value) {
+                          if(value==null){
+                            return "Enter a valid user id";
+                          }
+                        },
                       ),
                     ),
                   ),
@@ -167,7 +224,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: const Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Password',
+                          'Password :',
                           style: TextStyle(
                             color: Colors.white,
                             fontFamily: 'OpenSans',
@@ -222,7 +279,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     child: Checkbox(
                                       checkColor: Colors.black,
                                       side:
-                                      const BorderSide(color: Colors.white),
+                                          const BorderSide(color: Colors.white),
                                       value: value,
                                       onChanged: (bool? newValue) {
                                         setState(() {
@@ -264,12 +321,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   const SizedBox(
-                    height: 20,
+                    height: 5,
                   ),
                   Mybutton(
                     buttontext: 'LOGIN',
-                    OnTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => Bottomnavbar()));
+                    OnTap: () async {
+                      await _submit();
                     },
                   ),
                   SizedBox(height: screenHeight * 0.02),
@@ -299,7 +356,23 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(height: screenHeight * 0.05),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => PhoneLoginScreen()));
+                    },
+                    child: const Text(
+                      'Login with Phone number',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: 'OpenSans',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
                   GoogleSigninButton(
                     Googletext: 'Sign in with Google',
                     imagePath: 'assets/GoogleImage.png',

@@ -1,8 +1,8 @@
 import 'dart:ui';
 
 import 'package:flox/Chits_Investment.dart';
-import 'package:flox/Saving_chit.dart';
 import 'package:flox/about_us.dart';
+import 'package:flox/weeklyinvestment.dart';
 import 'package:flutter/material.dart';
 
 class Homepage extends StatelessWidget {
@@ -138,19 +138,19 @@ class Homepage extends StatelessWidget {
               ),
               nextpageinhome(
                 size,
-                'Fixed Chit Investment',
+                'Monthly Investment',
                 () => Navigator.of(context).push(
                   MaterialPageRoute(
                       builder: (context) => const ChitsInvestment()),
                 ),
               ),
-              nextpageinhome(size, 'Saving Chit Pots', () {
+              nextpageinhome(size, 'Weekly Investment', () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                      builder: (context) => const SavingChit()),
+                      builder: (context) => const Weeklyinvestment()),
                 );
               }),
-              nextpageinhome(size, 'Other Investment', () {
+              nextpageinhome(size, 'About Us', () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                       builder: (context) => const AboutUs()),

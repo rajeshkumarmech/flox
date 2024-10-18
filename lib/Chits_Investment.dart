@@ -1,7 +1,4 @@
-import 'dart:convert';
-import 'package:flox/1Lakh_chits.dart';
-import 'package:flox/2Lakh_chits.dart';
-import 'package:flox/5Lakh_chits.dart';
+import 'package:flox/Lakh_chits.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:fl_chart/fl_chart.dart';
@@ -443,8 +440,11 @@ class _Investmenttypefor1lakh extends State<Investmenttypefor1lakh> {
             children: [
               numbers('12', () {
                 Navigator.of(context).pop();
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const Onelakhchits()));
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const lakhchits(
+                      amount_val: 1,
+                    )));
               }),
               numbers('24', () {}),
               numbers('36', () {}),
@@ -531,8 +531,11 @@ class _Investmenttypefor2lakh extends State<Investmenttypefor2lakh> {
             children: [
               numbers('12', () {
                 Navigator.of(context).pop();
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const Twolakhchits()));
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const lakhchits(
+                      amount_val: 2,
+                    )));
               }),
               numbers('24', () {}),
               numbers('36', () {}),
@@ -619,8 +622,12 @@ class _Investmenttypefor5lakh extends State<Investmenttypefor5lakh> {
             children: [
               numbers('12', () {
                 Navigator.of(context).pop();
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const Fivelakhchits()));
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const lakhchits(
+                      amount_val: 5,
+                    ))
+                    );
               }),
               numbers('24', () {}),
               numbers('36', () {}),

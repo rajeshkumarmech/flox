@@ -26,19 +26,19 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
     // Initialize the AnimationController
     _controller = AnimationController(
       duration: const Duration(
-          seconds: 2), // Extend duration for multiple transitions
+          milliseconds: 800), // Extend duration for multiple transitions
       vsync: this,
     );
 
     // Start the animation after a delay
-    Timer(const Duration(seconds: 2), () {
+    Timer(const Duration(milliseconds: 500), () {
       _controller.forward();
     });
 
     // Navigate to the home screen after the animation completes
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        Timer(const Duration(seconds: 1), () {
+        Timer(const Duration(milliseconds: 500), () {
           Navigator.of(context)
               .pushReplacement(MaterialPageRoute(builder: (_) => HomeScreen()));
         });
